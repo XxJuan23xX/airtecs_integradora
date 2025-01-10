@@ -42,3 +42,7 @@ Instalación:
 1.Clona el repositorio: 
 ```bash
 git clone https://github.com/XxJuan23xX/airtecs_integradora.git
+```
+**Integrantes**
+- Juan Manuel Kau Sima
+- Gilmer Gabriel Guerrero Torres

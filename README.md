@@ -12,7 +12,7 @@ Muchos propietarios de aires acondicionados enfrentan dificultades para mantener
 
 Con AirTech, buscamos solucionar este problema proporcionando una plataforma intuitiva que te permita:
 
-- **Solicitar servicios de mantenimiento preventivo para asegurar el funcionamiento óptimo de tu aire acondicionado.
-- **Contratar reparaciones rápidas cuando tu equipo presente fallas.
-- **Acceder a técnicos certificados y de confianza que se encarguen de tu aire acondicionado de manera profesional.
-- **Programar citas y hacer pagos de manera sencilla desde la app, para que puedas mantener tu equipo en buen estado sin complicaciones.
+- **Solicitar** servicios de mantenimiento preventivo para asegurar el funcionamiento óptimo de tu aire acondicionado.
+- **Contratar** reparaciones rápidas cuando tu equipo presente fallas.
+- **Acceder** a técnicos certificados y de confianza que se encarguen de tu aire acondicionado de manera profesional.
+- **Programar** citas y hacer pagos de manera sencilla desde la app, para que puedas mantener tu equipo en buen estado sin complicaciones.

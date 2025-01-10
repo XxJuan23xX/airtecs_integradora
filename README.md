@@ -24,3 +24,19 @@ Con AirTech, buscamos solucionar este problema proporcionando una plataforma int
 - **Acceso a Técnicos Certificados:** Conoce los perfiles de técnicos certificados en tu área y selecciona el que mejor se adapte a tus necesidades.
 - **Notificaciones Inteligentes:** Recibe recordatorios sobre los próximos mantenimientos preventivos, así como alertas de fallos o reparaciones urgentes.
 - **Pagos Seguros:** Realiza pagos de manera fácil y segura directamente desde la app.
+
+# 🛠️ Tecnologías Utilizadas
+- **Frontend:** React + Vite.
+- **Backend:** Node.js con Express.
+- **Base de Datos:** SQL Server (para almacenar transacciones y datos de usuarios).
+- **Autenticación:** Firebase Authentication.
+- **Despliegue:** Versel y Render.
+
+# 🚀 Cómo Empezar
+Requisitos Previos
+- Node.js instalado (versión 16 o superior).
+- SQL Server instalado y configurado.
+- Cuenta de Firebase para la autenticación.
+
+Instalación:
+1.Clona el repositorio: 

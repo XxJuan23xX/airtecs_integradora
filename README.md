@@ -16,3 +16,11 @@ Con AirTech, buscamos solucionar este problema proporcionando una plataforma int
 - **Contratar** reparaciones rápidas cuando tu equipo presente fallas.
 - **Acceder** a técnicos certificados y de confianza que se encarguen de tu aire acondicionado de manera profesional.
 - **Programar** citas y hacer pagos de manera sencilla desde la app, para que puedas mantener tu equipo en buen estado sin complicaciones.
+
+# 🌟 Características Principales
+- **Registro de Servicios:** Solicita y registra fácilmente los servicios de mantenimiento y reparación que necesitas para tu aire acondicionado.
+- **Historial de Servicios:** Visualiza un historial detallado de los servicios realizados, para que siempre sepas cuándo fue la última vez que tu equipo fue atendido.
+- **Programación de Citas:** Organiza y programa tus citas para mantenimiento o reparación según tu disponibilidad.
+- **Acceso a Técnicos Certificados:** Conoce los perfiles de técnicos certificados en tu área y selecciona el que mejor se adapte a tus necesidades.
+- **Notificaciones Inteligentes:** Recibe recordatorios sobre los próximos mantenimientos preventivos, así como alertas de fallos o reparaciones urgentes.
+- **Pagos Seguros:** Realiza pagos de manera fácil y segura directamente desde la app.

@@ -40,3 +40,4 @@ Requisitos Previos
 
 Instalación:
 1.Clona el repositorio: 
+(git clone https://github.com/XxJuan23xX/airtecs_integradora.git)

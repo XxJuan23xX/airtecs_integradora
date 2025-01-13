@@ -26,11 +26,15 @@ Con AirTech, buscamos solucionar este problema proporcionando una plataforma int
 - **Pagos Seguros:** Realiza pagos de manera fácil y segura directamente desde la app.
 
 # 🛠️ Tecnologías Utilizadas
+# Plataforma Web
 - **Frontend:** React + Vite.
 - **Backend:** Node.js con Express.
 - **Base de Datos:** SQL Server (para almacenar transacciones y datos de usuarios).
 - **Autenticación:** Firebase Authentication.
 - **Despliegue:** Versel y Render.
+
+# Aplicación Móvil
+- Flutter 
 
 # 🚀 Cómo Empezar
 Requisitos Previos

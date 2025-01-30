@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:airtecs_movil/features/Home/Presentation/Screens/HomeScreen.dart';
+import 'package:airtecs_movil/features/Session/Presentation/Screens/login_screen.dart';
+import 'package:airtecs_movil/features/Session/Presentation/Screens/register_screen.dart';
 
 class ScreenFirstWelcome extends StatefulWidget {
   const ScreenFirstWelcome({super.key});
@@ -56,25 +58,65 @@ class _ScreenFirstWelcome extends State<ScreenFirstWelcome> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: ElevatedButton(
-              onPressed: () {
-                if (_currentPage == 2) {
-                  completeWelcome();
-                } else {
-                  _controller.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: Text(_currentPage == 2 ? "¡Comenzar!" : "Continuar"),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    if (_currentPage == 2) {
+                      completeWelcome();
+                    } else {
+                      _controller.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle: const TextStyle(fontSize: 18),
+                  ),
+                  child: Text(_currentPage == 2 ? "¡Comenzar!" : "Continuar"),
+                ),
+                const SizedBox(height: 10),
+                // Botón para ir al login
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    );
+                  },
+                  child: const Text(
+                    "Iniciar sesión",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 16,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // Botón para ir al registro
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                    );
+                  },
+                  child: const Text(
+                    "Registrarse",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 16,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

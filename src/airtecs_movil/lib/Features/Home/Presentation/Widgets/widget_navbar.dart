@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:airtecs_movil/Features/Notifications_page/Presentation/Screens/Notification_Page.dart';
 
 class WidgetNavbar extends StatelessWidget {
   final String title;
@@ -10,7 +11,20 @@ class WidgetNavbar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       height: 80,
-      color: Colors.blue,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blue, Colors.lightBlueAccent], // Gradiente azul
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26, // Sombra sutil
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -25,11 +39,27 @@ class WidgetNavbar extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  // Redirige a la página de Notificaciones
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          const NotificationPage(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
+                },
                 icon: const Icon(Icons.notifications, color: Colors.white),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {}, // Puedes definir aquí otra funcionalidad
                 icon: const Icon(Icons.bar_chart, color: Colors.white),
               ),
             ],

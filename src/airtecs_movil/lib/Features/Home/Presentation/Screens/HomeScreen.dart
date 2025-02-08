@@ -65,21 +65,38 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       });
     }
   }
-
-  Future<void> aceptarSolicitud(String solicitudId) async {
-    try {
-      await ApiService.aceptarSolicitud(solicitudId);
+Future<void> aceptarSolicitud(String solicitudId) async {
+  print("🔎 ID de la solicitud a aceptar: $solicitudId");
+  try {
+    await ApiService.aceptarSolicitud(solicitudId);
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Solicitud aceptada con éxito.')),
       );
-      cargarSolicitudes(); // Recargar lista después de aceptar una solicitud
-    } catch (error) {
+      // ✅ Redirigir a ServicesPage
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const ServicesPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ),
+      );
+    }
+  } catch (error) {
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al aceptar: ${error.toString()}')),
       );
     }
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(

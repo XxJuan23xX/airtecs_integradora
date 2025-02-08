@@ -1,66 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:airtecs_movil/Features/Home/Presentation/Widgets/widget_bottom_bar.dart';
-import 'package:airtecs_movil/Features/Home/Presentation/Widgets/widget_navbar.dart';
-import 'package:airtecs_movil/Features/Home/Presentation/Screens/HomeScreen.dart'; // Importar HomeScreen
+import 'package:airtecs_movil/Services/api_service.dart';
+import 'package:airtecs_movil/Features/Services_Page/Presentation/Widgets/ServiceWidget.dart';
 
-class ServicesPage extends StatelessWidget {
+class ServicesPage extends StatefulWidget {
   const ServicesPage({super.key});
+
+  @override
+  State<ServicesPage> createState() => _ServicesPageState();
+}
+
+class _ServicesPageState extends State<ServicesPage> {
+  List<dynamic> solicitudes = [];
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    cargarSolicitudes();
+  }
+
+  Future<void> cargarSolicitudes() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final data = await ApiService.getSolicitudesAceptadas();
+      setState(() {
+        solicitudes = data.where((solicitud) => solicitud["estado"] != "finalizado").toList();
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: ${error.toString()}")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: const WidgetNavbar(title: "Servicios"),
+      appBar: AppBar(
+        title: const Text("Servicios Aceptados"),
+        backgroundColor: Colors.blueAccent,
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              "Servicios disponibles",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            Text(
-              "Aquí puedes explorar los servicios disponibles.",
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: WidgetBottomBar(
-        onHomePressed: () {
-          // Redirige al HomeScreen con una animación personalizada
-          Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                // Animación de deslizamiento
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.easeInOut;
-
-                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                var offsetAnimation = animation.drive(tween);
-
-                return SlideTransition(
-                  position: offsetAnimation,
-                  child: child,
-                );
-              },
-            ),
-          );
-        },
-        onServicesPressed: () {
-          // Mantener en la misma página de servicios
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ya estás en la página de servicios.')),
-          );
-        },
-      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : solicitudes.isEmpty
+              ? const Center(
+                  child: Text(
+                    "No tienes solicitudes aceptadas.",
+                    style: TextStyle(fontSize: 16, color: Colors.blueGrey),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: solicitudes.length,
+                  itemBuilder: (context, index) {
+                    final solicitud = solicitudes[index];
+                    return ServiceWidget(
+                      solicitudId: solicitud["_id"],
+                      estadoActual: solicitud["estado"],
+                      onEstadoActualizado: cargarSolicitudes,
+                    );
+                  },
+                ),
     );
   }
 }

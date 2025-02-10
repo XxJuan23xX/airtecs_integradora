@@ -4,12 +4,14 @@ import 'package:airtecs_movil/Services/api_service.dart';
 class ServiceWidget extends StatefulWidget {
   final String solicitudId;
   final String estadoActual;
+  final List<dynamic> historialEstados; // 🔥 Nuevo parámetro
   final VoidCallback onEstadoActualizado;
 
   const ServiceWidget({
     Key? key,
     required this.solicitudId,
     required this.estadoActual,
+    required this.historialEstados,
     required this.onEstadoActualizado,
   }) : super(key: key);
 
@@ -68,9 +70,106 @@ class _ServiceWidgetState extends State<ServiceWidget> {
       });
     }
   }
+Widget _buildBottomSheet() {
+  return Container(
+    padding: EdgeInsets.only(
+      top: 20,
+      left: 20,
+      right: 20,
+      bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+    ),
+    decoration: const BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Center(
+          child: Text(
+            "Actualizar Estado del Servicio",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+          ),
+        ),
+        const SizedBox(height: 20),
+        DropdownButtonFormField<String>(
+          value: selectedEstado,
+          onChanged: (value) {
+            setState(() {
+              selectedEstado = value;
+            });
+          },
+          items: ordenEstados.map((estado) {
+            return DropdownMenuItem(
+              value: estado,
+              child: Text(estado.replaceAll("_", " ").toUpperCase()),
+            );
+          }).toList(),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            labelText: "Selecciona el nuevo estado",
+            filled: true,
+            fillColor: Colors.grey[200],
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (selectedEstado == "en_lugar" || selectedEstado == "finalizado")
+          TextField(
+            controller: _codigoController,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              labelText: "Código de Confirmación",
+              filled: true,
+              fillColor: Colors.grey[200],
+            ),
+          ),
+        const SizedBox(height: 10),
+        TextField(
+          controller: _detallesController,
+          maxLines: 3,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            labelText: "Detalles adicionales (opcional)",
+            filled: true,
+            fillColor: Colors.grey[200],
+          ),
+        ),
+        const SizedBox(height: 20),
+        isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: actualizarEstado,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    "Confirmar",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+              ),
+      ],
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
+    double progreso = widget.historialEstados.length / ordenEstados.length;
+
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -83,7 +182,7 @@ class _ServiceWidgetState extends State<ServiceWidget> {
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             builder: (context) => _buildBottomSheet(),
@@ -103,19 +202,26 @@ class _ServiceWidgetState extends State<ServiceWidget> {
                 ),
               ),
               const SizedBox(height: 8),
+
+              // 🔥 **Barra de progreso**
+              LinearProgressIndicator(
+                value: progreso,
+                backgroundColor: Colors.grey[300],
+                color: Colors.blueAccent,
+              ),
+              const SizedBox(height: 8),
+
               Row(
                 children: [
                   const Icon(Icons.circle, size: 12, color: Colors.orange),
                   const SizedBox(width: 8),
                   Text(
-                    "Estado: ${widget.estadoActual.replaceAll("_", " ").toUpperCase()}",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.blueGrey,
-                    ),
+                    "Estado Actual: ${widget.estadoActual.replaceAll("_", " ").toUpperCase()}",
+                    style: const TextStyle(fontSize: 16, color: Colors.blueGrey),
                   ),
                 ],
               ),
+
               const SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,
@@ -124,7 +230,7 @@ class _ServiceWidgetState extends State<ServiceWidget> {
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
-                      shape: RoundedRectangleBorder(
+                      shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                       ),
                       builder: (context) => _buildBottomSheet(),
@@ -146,102 +252,6 @@ class _ServiceWidgetState extends State<ServiceWidget> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomSheet() {
-    return Container(
-      padding: EdgeInsets.only(
-        top: 20,
-        left: 20,
-        right: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Center(
-            child: Text(
-              "Actualizar Estado del Servicio",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueGrey),
-            ),
-          ),
-          const SizedBox(height: 20),
-          DropdownButtonFormField<String>(
-            value: selectedEstado,
-            onChanged: (value) {
-              setState(() {
-                selectedEstado = value;
-              });
-            },
-            items: ordenEstados.map((estado) {
-              return DropdownMenuItem(
-                value: estado,
-                child: Text(estado.replaceAll("_", " ").toUpperCase()),
-              );
-            }).toList(),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              labelText: "Selecciona el nuevo estado",
-              filled: true,
-              fillColor: Colors.grey[200],
-            ),
-          ),
-          const SizedBox(height: 10),
-          if (selectedEstado == "en_lugar" || selectedEstado == "finalizado")
-            TextField(
-              controller: _codigoController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                labelText: "Código de Confirmación",
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
-            ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _detallesController,
-            maxLines: 3,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              labelText: "Detalles adicionales (opcional)",
-              filled: true,
-              fillColor: Colors.grey[200],
-            ),
-          ),
-          const SizedBox(height: 20),
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: actualizarEstado,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      "Confirmar",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ),
-                ),
-        ],
       ),
     );
   }

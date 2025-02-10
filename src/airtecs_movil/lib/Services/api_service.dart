@@ -3,12 +3,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // URLs base separadas
-  static const String baseAuthUrl = 'https://backend-ronp.onrender.com/autenticacionTecnicos';
-  static const String baseSolicitudUrl = 'https://backend-ronp.onrender.com/aceptacionSolicitud';
-  static const String baseActualizacionUrl = 'https://backend-ronp.onrender.com/actualizacion';
-  static const String baseProgresoUrl = 'https://backend-ronp.onrender.com/progresoT'; // 📌 Nueva Base URL
-
+  // ✅ Definir las bases de URL generales
+  static const String baseAuthUrl = 'http://localhost:3000/autenticacionTecnicos';
+  static const String baseSolicitudUrl = 'http://localhost:3000/aceptacionSolicitud';
+  static const String baseActualizacionUrl = 'http://localhost:3000/actualizacion';
+  static const String baseProgresoUrl = 'http://localhost:3000/progresoT'; // 🔥 No se toca
+  static const String baseSolicitudesUrl = 'http://localhost:3000/solicitudes-tecnicos';
+  static const String baseProgresoServicioUrl = 'http://localhost:3000/progreso'; // ✅ Nueva Base URL
 
   // ✅ Función para obtener el token almacenado en SharedPreferences
   static Future<String?> getToken() async {
@@ -38,7 +39,7 @@ class ApiService {
     print("🚀 Token eliminado al cerrar sesión.");
   }
 
-  // ✅ Registrar técnico
+  // ✅ Registrar técnico (NO SE TOCA)
   static Future<Map<String, dynamic>> registerTecnico(Map<String, dynamic> data) async {
     final response = await http.post(
       Uri.parse('$baseAuthUrl/register'),
@@ -49,11 +50,11 @@ class ApiService {
     if (response.statusCode == 201) {
       return jsonDecode(response.body);
     } else {
-      throw Exception(jsonDecode(response.body)['error'] ?? 'Error al registrar.');
+      throw Exception(jsonDecode(response.body)['error'] ?? 'Error al registrar técnico.');
     }
   }
 
-  // ✅ Iniciar sesión de técnico
+  // ✅ Iniciar sesión de técnico (NO SE TOCA)
   static Future<Map<String, dynamic>> loginTecnico(Map<String, dynamic> data) async {
     final response = await http.post(
       Uri.parse('$baseAuthUrl/login'),
@@ -63,18 +64,15 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-
-      // Guarda el token correctamente
       await saveToken(responseData['session_token']);
-
       return responseData;
     } else {
       throw Exception(jsonDecode(response.body)['error'] ?? 'Error al iniciar sesión.');
     }
   }
 
-  // ✅ Obtener solicitudes pendientes
-  static Future<List<dynamic>> getSolicitudesPendientes() async {
+  // ✅ Obtener solicitudes pendientes para técnicos con detalles (NO SE TOCA)
+  static Future<List<dynamic>> getSolicitudesPendientesDetalles() async {
     final token = await getToken();
 
     if (token == null) {
@@ -83,7 +81,7 @@ class ApiService {
     }
 
     final response = await http.get(
-      Uri.parse('$baseSolicitudUrl/solicitudes-pendientes'),
+      Uri.parse('$baseSolicitudesUrl/pendientes-tecnicos'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -97,7 +95,7 @@ class ApiService {
     }
   }
 
-  // ✅ Aceptar solicitud
+  // ✅ Aceptar solicitud (NO SE TOCA)
   static Future<void> aceptarSolicitud(String solicitudId) async {
     final token = await getToken();
 
@@ -119,7 +117,7 @@ class ApiService {
     }
   }
 
-  // ✅ Obtener solicitudes aceptadas
+  // ✅ Obtener solicitudes aceptadas (NO SE TOCA)
   static Future<List<dynamic>> getSolicitudesAceptadas() async {
     final token = await getToken();
 
@@ -142,8 +140,39 @@ class ApiService {
       throw Exception(jsonDecode(response.body)['error'] ?? 'Error al obtener solicitudes aceptadas.');
     }
   }
+///obtener el estado actual de una solicitud en `progreso`//
+static Future<List<dynamic>> getHistorialEstados(String solicitudId) async {
+  final token = await getToken();
 
-  // ✅ Actualizar estado del servicio
+  if (token == null) {
+    print("🚨 No se puede obtener el historial: Token ausente.");
+    return [];
+  }
+
+  try {
+    final response = await http.get(
+      Uri.parse('$baseProgresoServicioUrl/$solicitudId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return (data is List) ? data : [];
+    } else {
+      return [];
+    }
+  } catch (error) {
+    print("❌ Excepción en getHistorialEstados: $error");
+    return [];
+  }
+}
+
+
+
+  // ✅ Actualizar estado del servicio (NO SE TOCA)
   static Future<void> actualizarEstadoServicio({
     required String solicitudId,
     required String estado,
@@ -164,7 +193,7 @@ class ApiService {
       },
       body: jsonEncode({
         "estado": estado,
-        if (codigoConfirmacion != null) "codigoConfirmacion": codigoConfirmacion, // 🔥 Debe enviarse aquí
+        if (codigoConfirmacion != null) "codigoConfirmacion": codigoConfirmacion,
         if (detalles != null) "detalles": detalles,
       }),
     );
@@ -176,39 +205,7 @@ class ApiService {
     }
   }
 
- // ✅ **Nuevo Método: Obtener Progreso de Servicio por ID**
-  static Future<Map<String, dynamic>?> getProgresoPorSolicitud(String solicitudId) async {
-    final token = await getToken();
-
-    if (token == null) {
-      print("🚨 No se puede obtener el progreso: Token ausente.");
-      return null;
-    }
-
-    final response = await http.get(
-      Uri.parse('$baseProgresoUrl/$solicitudId'), // 📌 Endpoint correcto
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      // 🔥 Filtrar solo los servicios con estado "finalizado"
-      if (data["detallesServicio"] != null && data["detallesServicio"]["estado_solicitud"] == "finalizado") {
-        return data;
-      } else {
-        print("⚠️ No se encontraron servicios finalizados para la solicitud ID: $solicitudId");
-        return null;
-      }
-    } else {
-      throw Exception(jsonDecode(response.body)['error'] ?? 'Error al obtener el progreso del servicio.');
-    }
-  }
-
-  // ✅ **Método para obtener Servicios Finalizados**
+  // ✅ Obtener servicios finalizados (NO SE TOCA)
   static Future<List<dynamic>> getServiciosFinalizados() async {
     final token = await getToken();
 
@@ -218,7 +215,7 @@ class ApiService {
     }
 
     final response = await http.get(
-      Uri.parse('$baseProgresoUrl/solicitudes-finalizadas'), // 📌 Endpoint correcto
+      Uri.parse('$baseProgresoUrl/solicitudes-finalizadas'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

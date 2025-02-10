@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     });
 
     try {
-      final data = await ApiService.getSolicitudesPendientes();
+      final data = await ApiService.getSolicitudesPendientesDetalles();
       setState(() {
         solicitudes = data;
       });
@@ -65,38 +65,40 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       });
     }
   }
-Future<void> aceptarSolicitud(String solicitudId) async {
-  print("🔎 ID de la solicitud a aceptar: $solicitudId");
-  try {
-    await ApiService.aceptarSolicitud(solicitudId);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Solicitud aceptada con éxito.')),
-      );
-      // ✅ Redirigir a ServicesPage
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const ServicesPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeInOut;
-            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ),
-      );
-    }
-  } catch (error) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al aceptar: ${error.toString()}')),
-      );
+
+  Future<void> aceptarSolicitud(String solicitudId) async {
+    print("🔎 ID de la solicitud a aceptar: $solicitudId");
+    try {
+      await ApiService.aceptarSolicitud(solicitudId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Solicitud aceptada con éxito.')),
+        );
+        // ✅ Redirigir a ServicesPage
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => const ServicesPage(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(position: offsetAnimation, child: child);
+            },
+          ),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al aceptar: ${error.toString()}')),
+        );
+      }
     }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,8 +134,12 @@ Future<void> aceptarSolicitud(String solicitudId) async {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Descripción: ${solicitud['descripcion'] ?? 'Sin descripción'}"),
-                            Text("Estado: ${solicitud['estado'] ?? 'Pendiente'}"),
+                            Text("Dirección: ${solicitud['direccion']}"),
+                            Text("Detalles: ${solicitud['detalles']}"),
+                            Text("Marca AC: ${solicitud['marca_ac']}"),
+                            Text("Tipo AC: ${solicitud['tipo_ac']}"),
+                            Text("Fecha: ${solicitud['fecha']}"),
+                            Text("Hora: ${solicitud['hora']}"),
                           ],
                         ),
                         trailing: ElevatedButton(

@@ -26,9 +26,26 @@ class _ServicesPageState extends State<ServicesPage> {
 
     try {
       final data = await ApiService.getSolicitudesAceptadas();
+      List<dynamic> solicitudesActualizadas = [];
+
+      for (var solicitud in data) {
+        final historialEstados = await ApiService.getHistorialEstados(solicitud["_id"].toString());
+
+        if (historialEstados.isNotEmpty) {
+          final estadoActual = historialEstados.last["estado"];
+          solicitud["estado"] = estadoActual;
+          solicitud["historial"] = historialEstados; // 🔥 Guardamos todo el historial
+        }
+
+        if (solicitud["estado"] != "finalizado") {
+          solicitudesActualizadas.add(solicitud);
+        }
+      }
+
       setState(() {
-        solicitudes = data.where((solicitud) => solicitud["estado"] != "finalizado").toList();
+        solicitudes = solicitudesActualizadas;
       });
+
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error: ${error.toString()}")),
@@ -63,8 +80,9 @@ class _ServicesPageState extends State<ServicesPage> {
                   itemBuilder: (context, index) {
                     final solicitud = solicitudes[index];
                     return ServiceWidget(
-                      solicitudId: solicitud["_id"],
+                      solicitudId: solicitud["_id"].toString(),
                       estadoActual: solicitud["estado"],
+                      historialEstados: solicitud["historial"] ?? [], // 🔥 Pasamos el historial
                       onEstadoActualizado: cargarSolicitudes,
                     );
                   },

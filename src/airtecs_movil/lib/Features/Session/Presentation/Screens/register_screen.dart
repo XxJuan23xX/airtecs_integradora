@@ -19,6 +19,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isLoading = false;
   bool _passwordsMatch = true;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+  String? _phoneError;
 
   void _register() async {
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -32,9 +35,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    // Validación del teléfono antes de continuar
+    if (_phoneController.text.length != 10) {
+      setState(() {
+        _phoneError = "El número debe tener exactamente 10 dígitos";
+      });
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _passwordsMatch = true;
+      _phoneError = null;
     });
 
     try {
@@ -70,117 +82,137 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF6A11CB), // Morado oscuro
-              Color(0xFF2575FC), // Azul brillante
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 40),
-                // Botón de retroceso
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                      Navigator.pop(context); // Regresar a la pantalla anterior
-                    },
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Crea tu cuenta',
-                  style: GoogleFonts.poppins(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
+                // Logo
+                Image.asset(
+                  "lib/assets/images/logo.png",
+                  height: 90,
                 ),
                 const SizedBox(height: 20),
+
+                // Título
+                Text(
+                  "Create Account",
+                  style: GoogleFonts.poppins(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+
+                // Subtítulo
+                Text(
+                  "Register to continue using the app",
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 30),
+
+                // Campos de Registro con nuevo diseño
                 _buildTextField(
                   controller: _nameController,
-                  label: 'Nombre de usuario',
+                  label: "Full Name",
                   icon: Icons.person,
                 ),
                 const SizedBox(height: 15),
+
                 _buildTextField(
                   controller: _emailController,
-                  label: 'Correo electrónico',
+                  label: "Email",
                   icon: Icons.email,
                 ),
                 const SizedBox(height: 15),
+
                 _buildTextField(
                   controller: _passwordController,
-                  label: 'Contraseña',
+                  label: "Password",
                   icon: Icons.lock,
                   isPassword: true,
                 ),
                 const SizedBox(height: 15),
+
                 _buildTextField(
                   controller: _confirmPasswordController,
-                  label: 'Confirmar contraseña',
+                  label: "Confirm Password",
                   icon: Icons.lock,
                   isPassword: true,
-                  errorText: _passwordsMatch ? null : 'Las contraseñas no coinciden',
+                  isConfirmPassword: true,
+                  errorText: _passwordsMatch ? null : "Passwords do not match",
                 ),
                 const SizedBox(height: 15),
+
                 _buildTextField(
                   controller: _specialtyController,
-                  label: 'Especialidad',
+                  label: "Specialty",
                   icon: Icons.work,
                 ),
                 const SizedBox(height: 15),
+
+                // Campo de Teléfono con validación
                 _buildTextField(
                   controller: _phoneController,
-                  label: 'Teléfono',
+                  label: "Phone",
                   icon: Icons.phone,
+                  isPhone: true,
+                  errorText: _phoneError,
                 ),
                 const SizedBox(height: 30),
+
+                // Botón de Registro
                 _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? const CircularProgressIndicator(color: Color(0xFF3276E8))
                     : ElevatedButton(
                         onPressed: _register,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white, // Botón blanco
+                          backgroundColor: const Color(0xFF3276E8),
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 15),
+                          minimumSize: const Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          elevation: 5, // Sombra sutil
+                          elevation: 5,
                         ),
                         child: Text(
-                          'Registrarse',
+                          "Sign Up",
                           style: GoogleFonts.poppins(
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF2575FC), // Texto azul
                           ),
                         ),
                       ),
                 const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/login');
-                  },
-                  child: Text(
-                    '¿Ya tienes una cuenta? Inicia sesión',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.white, // Texto blanco
+
+                // Opción para iniciar sesión
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already have an account?",
+                      style: GoogleFonts.poppins(fontSize: 14, color: Colors.black54),
                     ),
-                  ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      child: Text(
+                        "Log In",
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF3276E8),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -195,11 +227,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required String label,
     required IconData icon,
     bool isPassword = false,
+    bool isConfirmPassword = false,
+    bool isPhone = false,
     String? errorText,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9), // Fondo blanco semi-transparente
+        color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -211,18 +245,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       child: TextField(
         controller: controller,
-        obscureText: isPassword,
-        style: GoogleFonts.poppins(color: Colors.black), // Texto negro
+        obscureText: isPassword ? (isConfirmPassword ? _obscureConfirmPassword : _obscurePassword) : false,
+        keyboardType: isPhone ? TextInputType.number : TextInputType.text,
+        maxLength: isPhone ? 10 : null,
+        style: GoogleFonts.poppins(color: Colors.black),
         decoration: InputDecoration(
+          counterText: "", // Oculta el contador de caracteres
           labelText: label,
           labelStyle: GoogleFonts.poppins(
-            color: Colors.black.withOpacity(0.6), // Label gris oscuro
+            color: Colors.black.withOpacity(0.6),
           ),
-          border: InputBorder.none, // Sin borde
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none, // 🔹 Sin bordes
+          ),
+          filled: true,
+          fillColor: Colors.white,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          prefixIcon: Icon(icon, color: Colors.black.withOpacity(0.6)),
+          prefixIcon: Icon(icon, color: const Color(0xFF3276E8)), // 🔹 Íconos azul
           errorText: errorText,
-          errorStyle: GoogleFonts.poppins(color: Colors.red), // Texto de error en rojo
         ),
       ),
     );

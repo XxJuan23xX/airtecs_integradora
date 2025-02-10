@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:airtecs_movil/Features/auth/screens/splash_screen.dart'; // Importamos SplashScreen
 import 'package:airtecs_movil/Features/Welcome/Presentation/Screens/ScreenFirstWelcome.dart';
 import 'package:airtecs_movil/Features/Session/Presentation/Screens/login_screen.dart';
 import 'package:airtecs_movil/Features/Session/Presentation/Screens/register_screen.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/welcome', // Ruta inicial
+      home: const SplashScreen(), // ✅ SplashScreen maneja la navegación inicial
       routes: {
         '/welcome': (context) => const ScreenFirstWelcome(),
         '/login': (context) => const LoginScreen(),

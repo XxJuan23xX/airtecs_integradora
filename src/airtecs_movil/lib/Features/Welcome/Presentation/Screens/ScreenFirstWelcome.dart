@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:airtecs_movil/features/Home/Presentation/Screens/HomeScreen.dart';
 import 'package:airtecs_movil/features/Session/Presentation/Screens/login_screen.dart';
-import 'package:airtecs_movil/features/Session/Presentation/Screens/register_screen.dart';
 
 class ScreenFirstWelcome extends StatefulWidget {
   const ScreenFirstWelcome({super.key});
@@ -20,7 +18,7 @@ class _ScreenFirstWelcome extends State<ScreenFirstWelcome> {
     await prefs.setBool('hasSeenWelcome', true);
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
+      MaterialPageRoute(builder: (context) => const LoginScreen()), // Ahora te lleva al login
     );
   }
 
@@ -113,42 +111,20 @@ class _ScreenFirstWelcome extends State<ScreenFirstWelcome> {
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  // Botón para ir al login
+                  const SizedBox(height: 20),
+                  // Nuevo Botón Saltar
                   TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
-                      );
-                    },
+                    onPressed: completeWelcome,
                     child: const Text(
-                      "Iniciar sesión",
+                      "Saltar",
                       style: TextStyle(
                         color: Colors.blue, // Texto azul
                         fontSize: 16,
-                        decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Botón para ir al registro
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                      );
-                    },
-                    child: const Text(
-                      "Registrarse",
-                      style: TextStyle(
-                        color: Colors.blue, // Texto azul
-                        fontSize: 16,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -163,44 +139,42 @@ class _ScreenFirstWelcome extends State<ScreenFirstWelcome> {
     required String title,
     required String description,
   }) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            Image.asset(
-              "lib/assets/images/logo.png",
-              height: 100,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Spacer(), // Empuja el contenido más abajo
+          Image.asset(
+            "lib/assets/images/logo.png",
+            height: 100,
+          ),
+          const SizedBox(height: 30), // Espacio extra para mejorar distribución
+          Image.asset(image, height: 250),
+          const SizedBox(height: 30), // Más separación
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
-            const SizedBox(height: 20),
-            Image.asset(image, height: 250),
-            const SizedBox(height: 20),
-            Text(
-              title,
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              description,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black, // Texto negro para mejor contraste
+                fontSize: 16,
+                color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                description,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87, // Texto negro semi-transparente
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+          Spacer(), // Centra el contenido verticalmente mejor
+        ],
       ),
     );
   }

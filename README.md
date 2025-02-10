@@ -1,4 +1,4 @@
-# AIRTECS: Lo que tus aires acondicionados necesitan.
+# AIRTECS: Soluciones rápidas, servicios confiables.
 # 📌 Descripción del Proyecto
 **AirTech** es una plataforma diseñada para ayudarte a gestionar y contratar servicios de mantenimiento y reparación de aires acondicionados de manera fácil y rápida. Nuestro objetivo es ofrecerte una experiencia sin complicaciones para que puedas mantener tu aire acondicionado en óptimas condiciones durante todo el año. Con esta app, podrás:
 

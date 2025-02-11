@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:airtecs_movil/Features/Notifications_page/Presentation/Screens/Notification_Page.dart';
-import 'package:airtecs_movil/Features/History_Page/Presentation/Screens/HIstoy_page.dart'; // ✅ Importar HistoryPage
+import 'package:airtecs_movil/Features/History_Page/Presentation/Screens/HIstoy_page.dart';
 
 class WidgetNavbar extends StatelessWidget {
-  final String title;
-
-  const WidgetNavbar({super.key, required this.title});
+  const WidgetNavbar({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      height: 80,
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 10, // Ajuste para la barra de estado
+        left: 20,
+        right: 20,
+        bottom: 10,
+      ),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blue, Colors.lightBlueAccent], // Gradiente azul
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black26, // Sombra sutil
+            color: Colors.black12, 
             blurRadius: 10,
             offset: Offset(0, 4),
           ),
@@ -29,19 +28,26 @@ class WidgetNavbar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+          // Logo centrado con imagen
+          Row(
+            children: [
+              Image.asset(
+                'lib/assets/images/imagen.jpg',
+                width: 40,
+                height: 40,
+              ),
+              const SizedBox(width: 8),
+              Image.asset(
+                'lib/assets/images/logo.png',
+                height: 35,
+              ),
+            ],
           ),
+          // Iconos con FontAwesome para mejor diseño
           Row(
             children: [
               IconButton(
                 onPressed: () {
-                  // Redirige a la página de Notificaciones
                   Navigator.push(
                     context,
                     PageRouteBuilder(
@@ -57,16 +63,15 @@ class WidgetNavbar extends StatelessWidget {
                     ),
                   );
                 },
-                icon: const Icon(Icons.notifications, color: Colors.white),
+                icon: const FaIcon(FontAwesomeIcons.bell, color: Colors.black, size: 22), // Ícono de campana
               ),
               IconButton(
                 onPressed: () {
-                  // ✅ Redirige a la pantalla de historial
                   Navigator.push(
                     context,
                     PageRouteBuilder(
                       pageBuilder: (context, animation, secondaryAnimation) =>
-                          const HistoryPage(), // Asegúrate de importar esta página
+                          const HistoryPage(),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
                         return SlideTransition(
@@ -80,7 +85,7 @@ class WidgetNavbar extends StatelessWidget {
                     ),
                   );
                 },
-                icon: const Icon(Icons.history, color: Colors.white), // ✅ Icono de historial
+                icon: const FaIcon(FontAwesomeIcons.clock, color: Colors.black, size: 22), // Ícono de reloj
               ),
             ],
           ),

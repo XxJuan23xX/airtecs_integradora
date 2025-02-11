@@ -10,9 +10,9 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: const WidgetNavbar(title: "Notificaciones"),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(80),
+        child: WidgetNavbar(), // ✅ Eliminado el parámetro `title`
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -63,7 +63,6 @@ class NotificationPage extends StatelessWidget {
       ),
       bottomNavigationBar: WidgetBottomBar(
         onHomePressed: () {
-          // Redirige a HomeScreen
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(
@@ -79,7 +78,6 @@ class NotificationPage extends StatelessWidget {
           );
         },
         onServicesPressed: () {
-          // Redirige a ServicesPage
           Navigator.push(
             context,
             PageRouteBuilder(

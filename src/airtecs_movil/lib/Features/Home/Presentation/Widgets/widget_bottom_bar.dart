@@ -4,20 +4,22 @@ class WidgetBottomBar extends StatelessWidget {
   final VoidCallback? onHomePressed;
   final VoidCallback? onServicesPressed;
   final VoidCallback? onProfilePressed;
+  final int selectedIndex; // 🔥 Índice dinámico para la página actual
 
   const WidgetBottomBar({
     Key? key,
     this.onHomePressed,
     this.onServicesPressed,
     this.onProfilePressed,
+    required this.selectedIndex, // 🔥 Recibe el índice actual
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 65, // 🔹 Reduce el alto total de la barra
+      height: 65,
       decoration: const BoxDecoration(
-        color: Colors.white, // 🔹 Fondo igual que la pantalla
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
@@ -27,24 +29,24 @@ class WidgetBottomBar extends StatelessWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly, // 🔹 Asegura que los elementos estén equidistantes
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildNavItem(
             icon: Icons.explore,
             label: "Explorar",
-            isActive: true, // 🔹 Puedes cambiar esto dinámicamente según la página actual
+            isActive: selectedIndex == 0, // 🔥 Activo si el índice es 0
             onTap: onHomePressed,
           ),
           _buildNavItem(
             icon: Icons.store,
             label: "Servicios",
-            isActive: false,
+            isActive: selectedIndex == 1, // 🔥 Activo si el índice es 1
             onTap: onServicesPressed,
           ),
           _buildNavItem(
             icon: Icons.person,
             label: "Mi Cuenta",
-            isActive: false,
+            isActive: selectedIndex == 2, // 🔥 Activo si el índice es 2
             onTap: onProfilePressed,
           ),
         ],
@@ -66,9 +68,9 @@ class WidgetBottomBar extends StatelessWidget {
           Icon(
             icon,
             size: 24,
-            color: isActive ? Colors.blue : Colors.grey, // 🔹 Color azul si está activo, gris si no
+            color: isActive ? Colors.blue : Colors.grey, // 🔥 Se ilumina según la página activa
           ),
-          const SizedBox(height: 4), // 🔹 Espaciado entre el icono y el texto
+          const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(

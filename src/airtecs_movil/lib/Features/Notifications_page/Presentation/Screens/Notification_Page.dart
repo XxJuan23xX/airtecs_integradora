@@ -62,6 +62,7 @@ class NotificationPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: WidgetBottomBar(
+        selectedIndex: 1, // 🔥 Si estás en la página de perfil, pasa 2
         onHomePressed: () {
           Navigator.pushReplacement(
             context,

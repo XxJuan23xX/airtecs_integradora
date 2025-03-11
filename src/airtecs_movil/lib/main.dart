@@ -6,9 +6,17 @@ import 'package:airtecs_movil/Features/Session/Presentation/Screens/register_scr
 import 'package:airtecs_movil/Features/Home/Presentation/Screens/HomeScreen.dart';
 import 'package:airtecs_movil/features/Services_Page/Presentation/Screens/ServicesPage.dart';
 import 'package:airtecs_movil/Features/Notifications_page/Presentation/Screens/Notification_Page.dart';
+import 'package:flutter/services.dart'; // ✅ Importar para bloquear orientación
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized(); // 🔹 Asegura inicialización antes de ejecutar
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,   // Solo modo vertical normal
+    DeviceOrientation.portraitDown, // Opcional (si quieres permitirlo boca abajo)
+  ]).then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {

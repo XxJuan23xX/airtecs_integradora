@@ -14,6 +14,7 @@ class ServicesPage extends StatefulWidget {
 class _ServicesPageState extends State<ServicesPage> {
   List<dynamic> solicitudes = [];
   bool isLoading = false;
+  double _progress = 0.0;
   String currentStatus = 'en camino'; // Estado inicial por defecto
   bool hasActiveService = false; // Para controlar si hay una solicitud en curso
 
@@ -34,7 +35,20 @@ String getAvatarUrl(String? avatar) {
   @override
   void initState() {
     super.initState();
+    _startFakeLoading(); // 🔥 Inicia la animación de la barra
     cargarSolicitudes();
+  }
+
+   // ✅ Simula el progreso de la barra de carga hasta llegar al 100%
+  void _startFakeLoading() {
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          _progress += 0.2; // 🔥 Incremento del progreso
+          if (_progress < 1.0) _startFakeLoading(); // 🔄 Llamado recursivo hasta llegar al 100%
+        });
+      }
+    });
   }
 
   bool isValidNextStatus(String currentStatus, String newStatus) {
@@ -156,6 +170,7 @@ Future<String> getNextStatus(String solicitudId) async {
   @override
 Widget build(BuildContext context) {
   return Scaffold(
+    backgroundColor: Colors.white,
     appBar: AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
@@ -175,7 +190,28 @@ Widget build(BuildContext context) {
       ],
     ),
     body: isLoading
-        ? const Center(child: CircularProgressIndicator())
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Cargando servicios...",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: LinearProgressIndicator(
+                      value: _progress,
+                      minHeight: 10,
+                      backgroundColor: Colors.blue[100],
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                    ),
+                  ),
+                ),
+              ],
+            )
         : hasActiveService
             ? ListView.builder(
   padding: const EdgeInsets.all(16),

@@ -21,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> solicitudesFiltradas = [];
   bool isLoading = false;
   int categoriaSeleccionada = 0; // 🔥 Índice de la categoría seleccionada
+  double _progress = 0.0;
 // 🔥 Controladores para manejar el scroll
 final ScrollController _scrollController = ScrollController();
 final ScrollController _categoryScrollController = ScrollController();
@@ -35,7 +36,20 @@ final ScrollController _categoryScrollController = ScrollController();
   void initState() {
     super.initState();
     cargarSolicitudes();
+    _startFakeLoading(); // 🔥 Inicia la animación de la barra
     _scrollController.addListener(_onScroll);
+  }
+
+  // ✅ Simula el progreso de la barra de carga hasta llegar al 100%
+  void _startFakeLoading() {
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          _progress += 0.2; // 🔥 Incremento del progreso
+          if (_progress < 1.0) _startFakeLoading(); // 🔄 Llamado recursivo hasta llegar al 100%
+        });
+      }
+    });
   }
 
   @override
@@ -217,14 +231,28 @@ Widget build(BuildContext context) {
                   return true;
                 },
                 child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : solicitudesFiltradas.isEmpty
-                        ? const Center(
-                            child: Text(
-                              "No hay servicios disponibles en esta categoría.",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          )
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Cargando servicios...",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: LinearProgressIndicator(
+                      value: _progress,
+                      minHeight: 10,
+                      backgroundColor: Colors.blue[100],
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                    ),
+                  ),
+                ),
+              ],
+            )
                         : ListView.builder(
                             controller: _scrollController,
                             itemCount: solicitudesFiltradas.length,

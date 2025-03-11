@@ -6,6 +6,7 @@ class ApiService {
   // URLs base separadas
   static const String baseAuthUrl = 'https://airtecs-lgfl.onrender.com/autenticacionTecnicos';
   static const String baseSolicitudUrl = 'https://airtecs-lgfl.onrender.com/aceptacionSolicitud';
+  static const String basePagadosUrl = 'https://airtecs-lgfl.onrender.com/solicitudes-tecnicos';
   static const String baseSoliIdUrl = 'https://airtecs-lgfl.onrender.com/solicitudes'; // Debe estar bien configurada
   static const String baseActualizacionUrl = 'https://airtecs-lgfl.onrender.com/actualizacion';
   static const String baseProgresoUrl = 'https://airtecs-lgfl.onrender.com/progresoT'; // 📌 Nueva Base URL
@@ -283,6 +284,32 @@ static Future<Map<String, dynamic>?> getSolicitudById(String solicitudId) async 
   }
 }
 
+// ✅ Obtener detalles de una solicitud pagada
+static Future<Map<String, dynamic>?> getSolicitudPagadaById(String solicitudId) async {
+  final token = await getToken();
+
+  if (token == null) {
+    print("🚨 No se puede obtener la solicitud pagada: Token ausente.");
+    return null;
+  }
+
+  final response = await http.get(
+    Uri.parse('https://airtecs-lgfl.onrender.com/solicitudes/solicitudpagada/$solicitudId'),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    print("❌ Error al obtener solicitud pagada: ${response.body}");
+    return null;
+  }
+}
+
+
 
 
   // ✅ Aceptar solicitud
@@ -363,6 +390,34 @@ static Future<Map<String, dynamic>?> getSolicitudById(String solicitudId) async 
       );
     }
   }
+
+  // ✅ Obtener solicitudes pagadas del técnico autenticado
+static Future<List<dynamic>> getSolicitudesPagadas() async {
+  final token = await getToken();
+
+  if (token == null) {
+    print("🚨 No se puede obtener servicios pagados: Token ausente.");
+    return [];
+  }
+
+  final response = await http.get(
+    Uri.parse('$basePagadosUrl/pagados-tecnicos'), // 📌 Endpoint correcto
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    print("✅ Servicios pagados obtenidos correctamente.");
+    return jsonDecode(response.body);
+  } else {
+    print("❌ Error al obtener servicios pagados: ${response.statusCode}");
+    print("📌 Respuesta: ${response.body}");
+    throw Exception(jsonDecode(response.body)['error'] ?? 'Error al obtener servicios pagados.');
+  }
+}
+
 
 
 

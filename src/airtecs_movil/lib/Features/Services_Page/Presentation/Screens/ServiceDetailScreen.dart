@@ -77,7 +77,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
         this.avatarUrl = avatarUrl;
       });
     } catch (error) {
-      setState(() {
+       setState(() {
         userName = "Error al cargar";
         avatarUrl = 'https://airtecs-lgfl.onrender.com/uploads/avatar-default.jpg'; // Avatar por defecto en caso de error
       });

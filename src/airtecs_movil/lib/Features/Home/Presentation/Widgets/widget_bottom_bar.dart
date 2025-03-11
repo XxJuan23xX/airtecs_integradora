@@ -21,11 +21,7 @@ class WidgetBottomBar extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, -2),
-          ),
+          
         ],
       ),
       child: Row(
